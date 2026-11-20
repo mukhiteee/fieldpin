@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+  <!-- Primary SEO & GitHub Pages Metadata -->
+  <title>FieldPin — Minimalist GPS Coordinate Collector</title>
+  <meta name="title" content="FieldPin — Minimalist GPS Coordinate Collector" />
+  <meta name="description" content="Capture high-accuracy latitude and longitude coordinates in the field, verify on Google Maps, and export structured PDF, CSV, and Word schedules." />
+  <meta name="keywords" content="GPS coordinate collector, latitude longitude mapper, field survey app, PWA geolocation, Google Maps pin collector" />
+  <meta name="author" content="FieldPin" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#090b0e" />
+
+  <!-- PWA & Mobile App Capabilities -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FieldPin" />
+
+  <!-- Embedded Crisp SVG Data-URI Favicon & Apple Touch Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090b0e'/%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='none' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%2310b859' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='4.5' fill='%2310b859'/%3E%3Cline x1='32' y1='9' x2='32' y2='16' stroke='%2310b859' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='32' y1='48' x2='32' y2='55' stroke='%2310b859' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='9' y1='32' x2='16' y2='32' stroke='%2310b859' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='48' y1='32' x2='55' y2='32' stroke='%2310b859' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090b0e'/%3E%3Ccircle cx='90' cy='90' r='46' fill='none' stroke='%2310b859' stroke-width='7'/%3E%3Ccircle cx='90' cy='90' r='13' fill='%2310b859'/%3E%3Cline x1='90' y1='24' x2='90' y2='44' stroke='%2310b859' stroke-width='7' stroke-linecap='round'/%3E%3Cline x1='90' y1='136' x2='90' y2='156' stroke='%2310b859' stroke-width='7' stroke-linecap='round'/%3E%3Cline x1='24' y1='90' x2='44' y2='90' stroke='%2310b859' stroke-width='7' stroke-linecap='round'/%3E%3Cline x1='136' y1='90' x2='156' y2='90' stroke='%2310b859' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="FieldPin" />
+  <meta property="og:url" content="./" />
+  <meta property="og:title" content="FieldPin — Minimalist GPS Coordinate Collector" />
+  <meta property="og:description" content="Tap once to capture precision GPS coordinates in the field, verify locations on Google Maps, and export clean PDF, CSV, and Word tables." />
+  <meta property="og:image" content="./og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="FieldPin — Precision GPS Coordinate Collector Interface" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="FieldPin — Minimalist GPS Coordinate Collector" />
+  <meta name="twitter:description" content="Tap once to capture precision GPS coordinates in the field, verify locations on Google Maps, and export clean PDF, CSV, and Word tables." />
+  <meta name="twitter:image" content="./og-image.png" />
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jsPDF & AutoTable CDN for Structured PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Space Grotesk"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: '#090b0e',
+            surface: '#11151b',
+            surfaceElevated: '#171c24',
+            alabaster: '#f4f6f8',
+            emeraldSignal: '#10b859',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      background-color: #090b0e;
+      color: #f4f6f8;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100dvh;
+      overscroll-behavior-y: contain;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Swiss-Editorial Matte Surfaces & Hairlines */
+    .matte-card {
+      background-color: #11151b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .matte-card-selected {
+      background-color: rgba(16, 184, 89, 0.07);
+      border: 1px solid rgba(16, 184, 89, 0.45);
+    }
+
+    .hairline-input {
+      background-color: #0d1015;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .hairline-input:focus {
+      outline: none;
+      border-color: #10b859;
+      background-color: #11151b;
+    }
+
+    /* Minimalist Circular Capture Button */
+    .capture-disc {
+      background: radial-gradient(120% 120% at 30% 20%, #163024 0%, #0e1714 65%, #0a0f0e 100%);
+      border: 1px solid rgba(16, 184, 89, 0.45);
+      box-shadow:
+        0 0 0 12px rgba(255, 255, 255, 0.02),
+        0 24px 48px -12px rgba(0, 0, 0, 0.85),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    .capture-disc:hover {
+      border-color: rgba(16, 184, 89, 0.8);
+      box-shadow:
+        0 0 0 12px rgba(16, 184, 89, 0.05),
+        0 28px 56px -12px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .capture-disc:active {
+      transform: scale(0.94);
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.65; }
+      100% { transform: scale(1.42); opacity: 0; }
+    }
+
+    .capture-pulse-idle {
+      animation: pulseRing 3.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .capture-pulse-active {
+      animation: pulseRing 1.1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    /* Minimalist Checkbox */
+    .swiss-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 19px;
+      height: 19px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background-color: #090b0e;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .swiss-checkbox:checked {
+      background-color: #10b859;
+      border-color: #10b859;
+    }
+    .swiss-checkbox:checked::after {
+      content: '';
+      width: 5px;
+      height: 9px;
+      border: solid #05110a;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 1.5px;
+    }
+
+    /* Bottom Sheet Entrance */
+    @keyframes sheetSlideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .sheet-enter {
+      animation: sheetSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
+    .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="antialiased selection:bg-emeraldSignal/25 selection:text-emerald-200">
+
+  <!-- MAIN APPLICATION CONTAINER -->
+  <div class="max-w-md mx-auto min-h-[100dvh] flex flex-col relative">
+
+    <!-- MINIMAL BRAND HEADER -->
+    <header class="sticky top-0 z-30 pt-safe px-5 pb-3.5 bg-canvas/90 backdrop-blur-md border-b border-white/[0.07]">
+      <div class="flex items-center justify-between">
+        <!-- Brand Identity -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-surfaceElevated border border-white/10 flex items-center justify-center text-emeraldSignal">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <circle cx="12" cy="12" r="8"/>
+              <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="text-base font-bold tracking-tight text-alabaster">FieldPin</span>
+        </div>
+
+        <!-- Right Controls: Live GPS Accuracy Pill + Unobtrusive '...' Overflow Menu -->
+        <div class="flex items-center gap-2 relative">
+          <div class="px-2.5 py-1 rounded-full bg-surface border border-white/[0.08] flex items-center gap-1.5">
+            <span id="gpsDot" class="w-1.5 h-1.5 rounded-full bg-emeraldSignal"></span>
+            <span id="gpsPillLabel" class="font-mono text-[11px] text-gray-300">GPS Ready</span>
+          </div>
+
+          <!-- Overflow Menu Trigger ('...') -->
+          <button
+            id="overflowMenuBtn"
+            onclick="toggleOverflowMenu(event)"
+            aria-label="More options"
+            class="w-8 h-8 rounded-full bg-surface hover:bg-surfaceElevated border border-white/[0.08] flex items-center justify-center text-gray-400 hover:text-alabaster transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="5" cy="12" r="1.75"/>
+              <circle cx="12" cy="12" r="1.75"/>
+              <circle cx="19" cy="12" r="1.75"/>
+            </svg>
+          </button>
+
+          <!-- Unobtrusive Overflow Dropdown -->
+          <div
+            id="overflowDropdown"
+            class="hidden absolute right-0 top-10 w-52 rounded-xl bg-surfaceElevated border border-white/12 shadow-2xl py-1.5 z-40"
+          >
+            <button
+              onclick="triggerDemoPin()"
+              class="w-full px-3.5 py-2.5 text-left text-xs font-medium text-gray-200 hover:bg-white/[0.06] flex items-center justify-between transition cursor-pointer"
+            >
+              <span>Simulate GPS Pin</span>
+              <span class="font-mono text-[10px] text-emeraldSignal">DEMO</span>
+            </button>
+            <div class="my-1 border-t border-white/[0.07]"></div>
+            <div class="px-3.5 py-1.5 text-[11px] text-gray-500 flex items-center justify-between">
+              <span>Precision</span>
+              <span class="font-mono text-gray-400">6 dec (~0.11m)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 px-5 pt-5 pb-28">
+
+      <!-- ========================================================= -->
+      <!-- SCREEN 1: CAPTURE (CALM & PURPOSEFUL)                     -->
+      <!-- ========================================================= -->
+      <section id="captureScreen" class="flex flex-col items-center justify-center min-h-[calc(100dvh-185px)] text-center">
+        
+        <!-- Centered Circular Capture Button -->
+        <div class="relative flex items-center justify-center my-6">
+          <!-- Subtle Concentric Radar Pulse -->
+          <div id="capturePulseRing" class="absolute inset-0 rounded-full border border-emeraldSignal/45 capture-pulse-idle pointer-events-none"></div>
+
+          <button
+            id="captureMainBtn"
+            onclick="initiateGpsCapture()"
+            aria-label="Capture GPS Coordinates"
+            class="capture-disc relative z-10 w-44 h-44 rounded-full flex flex-col items-center justify-center cursor-pointer select-none"
+          >
+            <div class="w-11 h-11 rounded-full bg-emeraldSignal/15 border border-emeraldSignal/35 flex items-center justify-center text-emeraldSignal mb-2.5">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8"/>
+                <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+                <line x1="12" y1="2" x2="12" y2="5"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+                <line x1="2" y1="12" x2="5" y2="12"/>
+                <line x1="19" y1="12" x2="22" y2="12"/>
+              </svg>
+            </div>
+            <span id="captureBtnTitle" class="text-base font-bold tracking-tight text-alabaster">Capture</span>
+            <span id="captureBtnSub" class="font-mono text-[10px] tracking-widest uppercase text-gray-400 mt-0.5">Pin Spot</span>
+          </button>
+        </div>
+
+        <!-- Subtle Status Line -->
+        <p id="captureStatusLine" class="text-xs text-gray-400 max-w-[250px] leading-relaxed mt-3">
+          Stand at the exact location and tap Capture to lock coordinates.
+        </p>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- SCREEN 2: SAVED PLACES (VAULT)                            -->
+      <!-- ========================================================= -->
+      <section id="vaultScreen" class="hidden space-y-4">
+        
+        <!-- Top Vault Bar: Title + Progressive Disclosure Actions ('Select' & 'Export') -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-lg font-bold tracking-tight text-alabaster">Saved Places</h1>
+            <p id="vaultCountSubtitle" class="text-xs text-gray-400 mt-0.5">0 locations stored</p>
+          </div>
+
+          <div id="vaultHeaderActions" class="flex items-center gap-2">
+            <button
+              id="toggleSelectModeBtn"
+              onclick="toggleSelectionMode()"
+              class="px-3 py-1.5 rounded-lg bg-surface hover:bg-surfaceElevated border border-white/[0.09] text-xs font-medium text-gray-200 transition cursor-pointer"
+            >
+              Select
+            </button>
+            <button
+              onclick="openExportDrawer()"
+              class="px-3 py-1.5 rounded-lg bg-alabaster hover:bg-white text-canvas text-xs font-semibold transition cursor-pointer"
+            >
+              Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Clean Search Input -->
+        <div class="relative">
+          <svg class="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            id="vaultSearchField"
+            oninput="renderSavedPlaces()"
+            placeholder="Search saved places..."
+            class="hairline-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm text-alabaster placeholder-gray-500"
+          />
+        </div>
+
+        <!-- Spacious Saved Locations List -->
+        <div id="placesListContainer" class="space-y-3 pt-1">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FLOATING BULK ACTION BAR (Appears ONLY in Selection Mode) -->
+    <div
+      id="floatingBulkBar"
+      class="hidden fixed bottom-20 inset-x-0 z-30 px-5 pointer-events-none"
+    >
+      <div class="max-w-md mx-auto pointer-events-auto rounded-2xl bg-surfaceElevated/95 backdrop-blur-md border border-white/14 shadow-2xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button
+            id="selectAllBtn"
+            onclick="toggleSelectAll()"
+            class="text-xs font-semibold text-alabaster hover:text-emeraldSignal transition cursor-pointer"
+          >
+            Select All
+          </button>
+          <span class="text-white/15">|</span>
+          <span id="selectedCountLabel" class="font-mono text-xs text-gray-400">0 selected</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            id="bulkDeleteTrigger"
+            onclick="openBulkDeleteConfirm()"
+            disabled
+            class="px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 disabled:opacity-35 text-xs font-semibold transition cursor-pointer"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINIMAL BOTTOM TAB BAR -->
+    <nav class="fixed bottom-0 inset-x-0 z-20 bg-canvas/90 backdrop-blur-md border-t border-white/[0.07] pb-safe">
+      <div class="max-w-md mx-auto grid grid-cols-2 h-16">
+        <button
+          id="navCaptureTab"
+          onclick="switchTab('capture')"
+          class="flex flex-col items-center justify-center gap-1 text-emeraldSignal font-semibold text-xs transition cursor-pointer"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+            <circle cx="12" cy="12" r="8"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+          <span>Capture</span>
+        </button>
+
+        <button
+          id="navVaultTab"
+          onclick="switchTab('vault')"
+          class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 font-medium text-xs transition cursor-pointer relative"
+        >
+          <div class="relative">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="2.5"/>
+            </svg>
+            <span
+              id="navVaultCountDot"
+              class="hidden absolute -top-1.5 -right-3 font-mono text-[10px] font-medium px-1.5 rounded-full bg-surfaceElevated border border-white/15 text-alabaster"
+            >
+              0
+            </span>
+          </div>
+          <span>Saved Places</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SLIDE-UP SAVE LOCATION MODAL                              -->
+  <!-- ========================================================= -->
+  <div id="saveModalOverlay" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center">
+    <div class="sheet-enter w-full max-w-md bg-surface border-t sm:border border-white/12 rounded-t-3xl sm:rounded-3xl p-5 pb-7 shadow-2xl">
+      
+      <div class="w-9 h-1 rounded-full bg-white/15 mx-auto mb-4 sm:hidden"></div>
+
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="text-[11px] font-medium uppercase tracking-wider text-emeraldSignal">Coordinates Locked</span>
+          <h2 class="text-lg font-bold text-alabaster mt-0.5">Save Location</h2>
+        </div>
+        <span id="modalAccuracyPill" class="font-mono text-xs px-2.5 py-1 rounded-full bg-emeraldSignal/10 border border-emeraldSignal/30 text-emeraldSignal">
+          ±4m
+        </span>
+      </div>
+
+      <!-- Coordinate Readout + Direct Google Maps Verification Link -->
+      <div class="rounded-2xl bg-canvas border border-white/[0.08] p-3.5 mb-4 flex items-center justify-between gap-3">
+        <div>
+          <span class="block text-[10px] uppercase tracking-wider text-gray-500">Lat, Lng</span>
+          <span id="modalCoordsText" class="font-mono text-sm font-medium text-alabaster mt-0.5 block">0.000000, 0.000000</span>
+        </div>
+
+        <a
+          id="modalMapsPreviewLink"
+          href="https://www.google.com/maps"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3 py-2 rounded-xl bg-surfaceElevated hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-alabaster inline-flex items-center gap-1 transition shrink-0"
+        >
+          <span>Open in Google Maps ↗</span>
+        </a>
+      </div>
+
+      <!-- Save Form -->
+      <form id="savePlaceForm" onsubmit="saveCapturedPlace(event)" class="space-y-4">
+        <div>
+          <label for="placeNameInput" class="block text-xs font-medium text-gray-300 mb-1.5">
+            Place Name <span class="text-emeraldSignal">*</span>
+          </label>
+          <input
+            type="text"
+            id="placeNameInput"
+            required
+            autocomplete="off"
+            placeholder="e.g., Main Entrance Gate"
+            class="hairline-input w-full rounded-xl px-3.5 py-3 text-sm text-alabaster placeholder-gray-500"
+          />
+        </div>
+
+        <div>
+          <label for="placeCategorySelect" class="block text-xs font-medium text-gray-300 mb-1.5">Category</label>
+          <select
+            id="placeCategorySelect"
+            class="hairline-input w-full rounded-xl px-3.5 py-3 text-sm text-alabaster"
+          >
+            <option value="Building Entrance">Building Entrance</option>
+            <option value="Footpath Node">Footpath Node</option>
+            <option value="Landmark">Landmark</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="placeNoteInput" class="block text-xs font-medium text-gray-300 mb-1.5">
+            Note <span class="text-gray-500 font-normal">(optional)</span>
+          </label>
+          <input
+            type="text"
+            id="placeNoteInput"
+            autocomplete="off"
+            placeholder="e.g., North steps near walkway"
+            class="hairline-input w-full rounded-xl px-3.5 py-2.5 text-sm text-alabaster placeholder-gray-500"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <button
+            type="button"
+            onclick="closeSaveModal()"
+            class="py-3 rounded-xl bg-surfaceElevated hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-gray-300 transition cursor-pointer"
+          >
+            Discard
+          </button>
+          <button
+            type="submit"
+            class="py-3 rounded-xl bg-emeraldSignal hover:bg-[#13cc63] text-canvas text-xs font-bold transition cursor-pointer"
+          >
+            Save Place
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- BOTTOM-SHEET EXPORT DRAWER (PDF Table, CSV, Word .doc)    -->
+  <!-- ========================================================= -->
+  <div id="exportDrawerOverlay" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center" onclick="if(event.target===this) closeExportDrawer()">
+    <div class="sheet-enter w-full max-w-md bg-surface border-t sm:border border-white/12 rounded-t-3xl sm:rounded-3xl p-5 pb-7 shadow-2xl">
+      <div class="w-9 h-1 rounded-full bg-white/15 mx-auto mb-4 sm:hidden"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base font-bold text-alabaster">Export Coordinates</h3>
+          <p id="exportScopeSubtitle" class="text-xs text-gray-400 mt-0.5">Exporting all saved locations</p>
+        </div>
+        <button onclick="closeExportDrawer()" class="w-8 h-8 rounded-full bg-surfaceElevated border border-white/10 flex items-center justify-center text-gray-400 hover:text-alabaster cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-2.5">
+        <!-- PDF Table -->
+        <button
+          onclick="handleExportPDF()"
+          class="w-full p-3.5 rounded-2xl bg-canvas hover:bg-surfaceElevated border border-white/[0.08] flex items-center justify-between transition cursor-pointer group"
+        >
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 flex items-center justify-center font-mono text-xs font-medium">
+              PDF
+            </div>
+            <div>
+              <span class="block text-sm font-semibold text-alabaster">PDF Table Document</span>
+              <span class="block text-xs text-gray-400">Formatted landscape table with Google Maps links</span>
+            </div>
+          </div>
+          <span class="text-gray-500 group-hover:text-alabaster transition">→</span>
+        </button>
+
+        <!-- CSV Spreadsheet -->
+        <button
+          onclick="handleExportCSV()"
+          class="w-full p-3.5 rounded-2xl bg-canvas hover:bg-surfaceElevated border border-white/[0.08] flex items-center justify-between transition cursor-pointer group"
+        >
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-9 h-9 rounded-xl bg-emeraldSignal/10 border border-emeraldSignal/25 text-emeraldSignal flex items-center justify-center font-mono text-xs font-medium">
+              CSV
+            </div>
+            <div>
+              <span class="block text-sm font-semibold text-alabaster">CSV Spreadsheet</span>
+              <span class="block text-xs text-gray-400">Clean columns ready for Excel, Sheets, or GIS</span>
+            </div>
+          </div>
+          <span class="text-gray-500 group-hover:text-alabaster transition">→</span>
+        </button>
+
+        <!-- Word Document -->
+        <button
+          onclick="handleExportWord()"
+          class="w-full p-3.5 rounded-2xl bg-canvas hover:bg-surfaceElevated border border-white/[0.08] flex items-center justify-between transition cursor-pointer group"
+        >
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/25 text-sky-400 flex items-center justify-center font-mono text-xs font-medium">
+              DOC
+            </div>
+            <div>
+              <span class="block text-sm font-semibold text-alabaster">Word Document (.doc)</span>
+              <span class="block text-xs text-gray-400">Editable report table with clickable map links</span>
+            </div>
+          </div>
+          <span class="text-gray-500 group-hover:text-alabaster transition">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- CUSTOM CONFIRMATION DIALOG (BULK DELETE)                  -->
+  <!-- ========================================================= -->
+  <div id="confirmDeleteOverlay" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-5">
+    <div class="sheet-enter w-full max-w-xs rounded-3xl bg-surface border border-white/12 p-5 text-center shadow-2xl">
+      <h4 class="text-base font-bold text-alabaster">Delete Selected Places?</h4>
+      <p id="confirmDeleteCopy" class="text-xs text-gray-400 mt-1.5 mb-5 leading-relaxed">
+        These locations will be permanently removed from this device.
+      </p>
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="closeBulkDeleteConfirm()" class="py-2.5 rounded-xl bg-surfaceElevated border border-white/10 text-xs font-semibold text-gray-300 cursor-pointer">
+          Cancel
+        </button>
+        <button onclick="executeBulkDelete()" class="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white cursor-pointer">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINIMAL TOAST NOTIFICATION HOST -->
+  <div id="toastHost" class="fixed top-16 inset-x-0 z-50 pointer-events-none flex flex-col items-center gap-2 px-5"></div>
+
+  <!-- ========================================================= -->
+  <!-- APPLICATION JAVASCRIPT                                    -->
+  <!-- ========================================================= -->
+  <script>
+    const STORAGE_KEY = 'fieldpin_places_v2';
+
+    let places = [];
+    let selectionMode = false;
+    let selectedIds = new Set();
+    let pendingCapture = null;
+    let isLockingGps = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPlacesFromStorage();
+      updateCounters();
+      renderSavedPlaces();
+
+      // Close overflow menu when clicking outside
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('overflowDropdown');
+        const btn = document.getElementById('overflowMenuBtn');
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
+          menu.classList.add('hidden');
+        }
+      });
+    });
+
+    /**
+     * Build Exact Google Maps Search Query URL
+     */
+    function buildGoogleMapsUrl(lat, lng) {
+      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+
+    /**
+     * LocalStorage Persistence
+     */
+    function loadPlacesFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        places = raw ? JSON.parse(raw) : [];
+      } catch (err) {
+        console.error('Failed to read localStorage:', err);
+        places = [];
+      }
+    }
+
+    function savePlacesToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(places));
+      } catch (err) {
+        notifyToast('Storage full. Please export your data.', 'error');
+      }
+    }
+
+    /**
+     * Overflow Menu ('...') Toggle
+     */
+    function toggleOverflowMenu(e) {
+      e.stopPropagation();
+      document.getElementById('overflowDropdown').classList.toggle('hidden');
+    }
+
+    /**
+     * Tab Switching ('capture' | 'vault')
+     */
+    function switchTab(tab) {
+      const captureScreen = document.getElementById('captureScreen');
+      const vaultScreen = document.getElementById('vaultScreen');
+      const navCapture = document.getElementById('navCaptureTab');
+      const navVault = document.getElementById('navVaultTab');
+
+      if (tab === 'capture') {
+        captureScreen.classList.remove('hidden');
+        vaultScreen.classList.add('hidden');
+        navCapture.className = 'flex flex-col items-center justify-center gap-1 text-emeraldSignal font-semibold text-xs transition cursor-pointer';
+        navVault.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 font-medium text-xs transition cursor-pointer relative';
+        if (selectionMode) exitSelectionMode();
+      } else {
+        captureScreen.classList.add('hidden');
+        vaultScreen.classList.remove('hidden');
+        navVault.className = 'flex flex-col items-center justify-center gap-1 text-emeraldSignal font-semibold text-xs transition cursor-pointer relative';
+        navCapture.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 font-medium text-xs transition cursor-pointer';
+        renderSavedPlaces();
+      }
+    }
+
+    /**
+     * High-Accuracy GPS Capture
+     */
+    function initiateGpsCapture() {
+      if (isLockingGps) return;
+
+      if (!('geolocation' in navigator)) {
+        setGpsPill('Unsupported', 'amber');
+        notifyToast('Geolocation unavailable. Try Simulate GPS Pin in "..." menu.', 'error');
+        return;
+      }
+
+      isLockingGps = true;
+      setCaptureButtonState(true);
+      setGpsPill('Locking...', 'amber');
+      document.getElementById('captureStatusLine').textContent = 'Acquiring high-accuracy satellite fix...';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          isLockingGps = false;
+          setCaptureButtonState(false);
+
+          const lat = Number(pos.coords.latitude.toFixed(6));
+          const lng = Number(pos.coords.longitude.toFixed(6));
+          const accuracy = Math.round(pos.coords.accuracy);
+
+          setGpsPill(`±${accuracy}m`, 'emerald');
+          document.getElementById('captureStatusLine').textContent = `Locked at ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${accuracy}m)`;
+          openSaveModal({ lat, lng, accuracy });
+        },
+        (err) => {
+          isLockingGps = false;
+          setCaptureButtonState(false);
+
+          let msg = 'Unable to get GPS signal';
+          if (err.code === 1) msg = 'Location permission denied';
+          if (err.code === 2) msg = 'Position unavailable';
+          if (err.code === 3) msg = 'GPS request timed out';
+
+          setGpsPill('No Fix', 'rose');
+          document.getElementById('captureStatusLine').textContent = `${msg}. Use "..." → Simulate GPS Pin on desktop.`;
+          notifyToast(msg, 'error');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    /**
+     * Demo Pin Trigger (Hidden in '...' Overflow Menu)
+     */
+    function triggerDemoPin() {
+      document.getElementById('overflowDropdown').classList.add('hidden');
+      const lat = Number((6.51842 + (Math.random() - 0.5) * 0.0025).toFixed(6));
+      const lng = Number((3.39891 + (Math.random() - 0.5) * 0.0025).toFixed(6));
+      const accuracy = Math.floor(Math.random() * 4) + 3;
+
+      setGpsPill(`±${accuracy}m`, 'emerald');
+      document.getElementById('captureStatusLine').textContent = `Simulated fix: ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${accuracy}m)`;
+      openSaveModal({ lat, lng, accuracy });
+    }
+
+    function setGpsPill(text, tone) {
+      const dot = document.getElementById('gpsDot');
+      const label = document.getElementById('gpsPillLabel');
+      label.textContent = text;
+
+      if (tone === 'emerald') {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emeraldSignal';
+      } else if (tone === 'amber') {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping';
+      } else {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-rose-400';
+      }
+    }
+
+    function setCaptureButtonState(locking) {
+      const pulse = document.getElementById('capturePulseRing');
+      const title = document.getElementById('captureBtnTitle');
+      const sub = document.getElementById('captureBtnSub');
+
+      if (locking) {
+        pulse.classList.remove('capture-pulse-idle');
+        pulse.classList.add('capture-pulse-active');
+        title.textContent = 'Locking';
+        sub.textContent = 'Please Wait';
+      } else {
+        pulse.classList.remove('capture-pulse-active');
+        pulse.classList.add('capture-pulse-idle');
+        title.textContent = 'Capture';
+        sub.textContent = 'Pin Spot';
+      }
+    }
+
+    /**
+     * Save Modal Controls
+     */
+    function openSaveModal(coords) {
+      pendingCapture = coords;
+      const mapsUrl = buildGoogleMapsUrl(coords.lat, coords.lng);
+
+      document.getElementById('modalCoordsText').textContent = `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`;
+      document.getElementById('modalAccuracyPill').textContent = `±${coords.accuracy}m`;
+      document.getElementById('modalMapsPreviewLink').href = mapsUrl;
+
+      document.getElementById('placeNameInput').value = '';
+      document.getElementById('placeCategorySelect').value = 'Building Entrance';
+      document.getElementById('placeNoteInput').value = '';
+
+      document.getElementById('saveModalOverlay').classList.remove('hidden');
+      setTimeout(() => document.getElementById('placeNameInput').focus(), 80);
+    }
+
+    function closeSaveModal() {
+      document.getElementById('saveModalOverlay').classList.add('hidden');
+      pendingCapture = null;
+    }
+
+    function saveCapturedPlace(e) {
+      e.preventDefault();
+      if (!pendingCapture) return;
+
+      const name = document.getElementById('placeNameInput').value.trim();
+      if (!name) return;
+
+      const category = document.getElementById('placeCategorySelect').value;
+      const note = document.getElementById('placeNoteInput').value.trim();
+      const mapsUrl = buildGoogleMapsUrl(pendingCapture.lat, pendingCapture.lng);
+
+      const newPlace = {
+        id: 'fp_' + Date.now(),
+        name,
+        category,
+        note,
+        lat: pendingCapture.lat,
+        lng: pendingCapture.lng,
+        accuracy: pendingCapture.accuracy,
+        mapsUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      places.unshift(newPlace);
+      savePlacesToStorage();
+      closeSaveModal();
+      updateCounters();
+      renderSavedPlaces();
+      notifyToast(`Saved "${name}"`, 'success');
+    }
+
+    /**
+     * Counters & Progressive Disclosure Selection Mode
+     */
+    function updateCounters() {
+      const total = places.length;
+      document.getElementById('vaultCountSubtitle').textContent = `${total} ${total === 1 ? 'location' : 'locations'} stored`;
+
+      const dot = document.getElementById('navVaultCountDot');
+      if (total > 0) {
+        dot.textContent = total;
+        dot.classList.remove('hidden');
+      } else {
+        dot.classList.add('hidden');
+      }
+    }
+
+    function toggleSelectionMode() {
+      if (places.length === 0) {
+        notifyToast('No saved places to select', 'info');
+        return;
+      }
+      if (selectionMode) {
+        exitSelectionMode();
+      } else {
+        selectionMode = true;
+        selectedIds.clear();
+        document.getElementById('toggleSelectModeBtn').textContent = 'Done';
+        document.getElementById('toggleSelectModeBtn').className = 'px-3 py-1.5 rounded-lg bg-emeraldSignal/15 border border-emeraldSignal/40 text-xs font-semibold text-emeraldSignal transition cursor-pointer';
+        document.getElementById('floatingBulkBar').classList.remove('hidden');
+        updateBulkBarState();
+        renderSavedPlaces();
+      }
+    }
+
+    function exitSelectionMode() {
+      selectionMode = false;
+      selectedIds.clear();
+      document.getElementById('toggleSelectModeBtn').textContent = 'Select';
+      document.getElementById('toggleSelectModeBtn').className = 'px-3 py-1.5 rounded-lg bg-surface hover:bg-surfaceElevated border border-white/[0.09] text-xs font-medium text-gray-200 transition cursor-pointer';
+      document.getElementById('floatingBulkBar').classList.add('hidden');
+      renderSavedPlaces();
+    }
+
+    function toggleCardSelection(id) {
+      if (!selectionMode) return;
+      if (selectedIds.has(id)) {
+        selectedIds.delete(id);
+      } else {
+        selectedIds.add(id);
+      }
+      updateBulkBarState();
+      renderSavedPlaces();
+    }
+
+    function toggleSelectAll() {
+      const visible = getFilteredPlaces();
+      const allSelected = visible.length > 0 && visible.every(p => selectedIds.has(p.id));
+      if (allSelected) {
+        visible.forEach(p => selectedIds.delete(p.id));
+      } else {
+        visible.forEach(p => selectedIds.add(p.id));
+      }
+      updateBulkBarState();
+      renderSavedPlaces();
+    }
+
+    function updateBulkBarState() {
+      const visible = getFilteredPlaces();
+      const count = selectedIds.size;
+      document.getElementById('selectedCountLabel').textContent = `${count} selected`;
+      document.getElementById('bulkDeleteTrigger').disabled = count === 0;
+
+      const allSelected = visible.length > 0 && visible.every(p => selectedIds.has(p.id));
+      document.getElementById('selectAllBtn').textContent = allSelected ? 'Deselect All' : 'Select All';
+    }
+
+    /**
+     * Render Saved Places List
+     */
+    function getFilteredPlaces() {
+      const q = (document.getElementById('vaultSearchField')?.value || '').toLowerCase().trim();
+      if (!q) return places;
+      return places.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        (p.note && p.note.toLowerCase().includes(q)) ||
+        `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`.includes(q)
+      );
+    }
+
+    function renderSavedPlaces() {
+      const container = document.getElementById('placesListContainer');
+      const filtered = getFilteredPlaces();
+
+      if (places.length === 0) {
+        container.innerHTML = `
+          <div class="matte-card rounded-2xl p-8 text-center mt-2">
+            <p class="text-sm font-semibold text-alabaster">No saved places yet</p>
+            <p class="text-xs text-gray-400 mt-1 max-w-[220px] mx-auto leading-relaxed">
+              Tap Capture to record your first location coordinate.
+            </p>
+            <button onclick="switchTab('capture')" class="mt-4 px-4 py-2 rounded-xl bg-emeraldSignal text-canvas text-xs font-bold cursor-pointer">
+              Go to Capture
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="matte-card rounded-2xl p-6 text-center">
+            <p class="text-xs text-gray-400">No places match your search query.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered
+        .map(place => {
+          const isChecked = selectedIds.has(place.id);
+          const coordText = `${place.lat.toFixed(6)}, ${place.lng.toFixed(6)}`;
+          const mapsHref = place.mapsUrl || buildGoogleMapsUrl(place.lat, place.lng);
+
+          return `
+            <article
+              onclick="${selectionMode ? `toggleCardSelection('${place.id}')` : ''}"
+              class="${isChecked ? 'matte-card-selected' : 'matte-card'} rounded-2xl p-4 transition-all ${selectionMode ? 'cursor-pointer' : ''}"
+            >
+              <div class="flex items-start gap-3">
+                ${
+                  selectionMode
+                    ? `<input type="checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleCardSelection('${place.id}')" class="swiss-checkbox mt-0.5" />`
+                    : ''
+                }
+
+                <div class="flex-1 min-w-0">
+                  <!-- Top Row: Place Name & Category -->
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-[15px] font-bold text-alabaster leading-snug break-words">${escapeHTML(place.name)}</h3>
+                    <span class="px-2 py-0.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-[11px] text-gray-400 shrink-0">
+                      ${escapeHTML(place.category)}
+                    </span>
+                  </div>
+
+                  ${place.note ? `<p class="text-xs text-gray-400 mt-1 break-words">${escapeHTML(place.note)}</p>` : ''}
+
+                  <!-- Monospace Coordinates + Accuracy -->
+                  <div class="mt-3 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="font-mono text-xs text-gray-200 truncate">${coordText}</span>
+                      <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-emeraldSignal/10 text-emeraldSignal shrink-0">
+                        ±${place.accuracy}m
+                      </span>
+                    </div>
+
+                    ${
+                      !selectionMode
+                        ? `<button
+                            onclick="copyCoords('${coordText}')"
+                            class="px-2 py-1 rounded-lg bg-canvas hover:bg-surfaceElevated border border-white/[0.08] text-[11px] font-medium text-gray-300 hover:text-alabaster transition shrink-0 cursor-pointer"
+                          >
+                            Copy
+                          </button>`
+                        : ''
+                    }
+                  </div>
+
+                  <!-- Bottom Row: Clickable Google Maps Link + Delete -->
+                  <div class="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between">
+                    <a
+                      href="${mapsHref}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onclick="event.stopPropagation()"
+                      class="inline-flex items-center gap-1 text-xs font-medium text-emeraldSignal hover:text-emerald-300 transition"
+                    >
+                      <span>Open in Google Maps ↗</span>
+                    </a>
+
+                    ${
+                      !selectionMode
+                        ? `<button
+                            onclick="deleteSinglePlace('${place.id}')"
+                            class="text-xs text-gray-500 hover:text-rose-400 transition cursor-pointer"
+                          >
+                            Delete
+                          </button>`
+                        : `<span class="font-mono text-[10px] text-gray-500">${formatShortDate(place.createdAt)}</span>`
+                    }
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join('');
+    }
+
+    /**
+     * Single & Bulk Deletion
+     */
+    function deleteSinglePlace(id) {
+      places = places.filter(p => p.id !== id);
+      savePlacesToStorage();
+      updateCounters();
+      renderSavedPlaces();
+      notifyToast('Location deleted', 'info');
+    }
+
+    function openBulkDeleteConfirm() {
+      if (selectedIds.size === 0) return;
+      document.getElementById('confirmDeleteCopy').textContent =
+        `Permanently remove ${selectedIds.size} selected ${selectedIds.size === 1 ? 'location' : 'locations'} from local storage?`;
+      document.getElementById('confirmDeleteOverlay').classList.remove('hidden');
+    }
+
+    function closeBulkDeleteConfirm() {
+      document.getElementById('confirmDeleteOverlay').classList.add('hidden');
+    }
+
+    function executeBulkDelete() {
+      const removedCount = selectedIds.size;
+      places = places.filter(p => !selectedIds.has(p.id));
+      savePlacesToStorage();
+      closeBulkDeleteConfirm();
+      exitSelectionMode();
+      updateCounters();
+      notifyToast(`Deleted ${removedCount} ${removedCount === 1 ? 'location' : 'locations'}`, 'info');
+    }
+
+    /**
+     * Bottom-Sheet Export Drawer (PDF Table, CSV, Word .doc)
+     */
+    function getRecordsForExport() {
+      if (selectionMode && selectedIds.size > 0) {
+        return places.filter(p => selectedIds.has(p.id));
+      }
+      return getFilteredPlaces();
+    }
+
+    function openExportDrawer() {
+      const records = getRecordsForExport();
+      if (records.length === 0) {
+        notifyToast('No saved places to export', 'error');
+        return;
+      }
+
+      const scopeText =
+        selectionMode && selectedIds.size > 0
+          ? `Exporting ${records.length} selected ${records.length === 1 ? 'place' : 'places'}`
+          : `Exporting all ${records.length} ${records.length === 1 ? 'place' : 'places'}`;
+
+      document.getElementById('exportScopeSubtitle').textContent = scopeText;
+      document.getElementById('exportDrawerOverlay').classList.remove('hidden');
+    }
+
+    function closeExportDrawer() {
+      document.getElementById('exportDrawerOverlay').classList.add('hidden');
+    }
+
+    /**
+     * 1. PDF Table Export (Includes Google Maps URL Column)
+     */
+    function handleExportPDF() {
+      const records = getRecordsForExport();
+      if (records.length === 0) return;
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        const dateLabel = new Date().toLocaleString([], {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.setTextColor(9, 11, 14);
+        doc.text('FieldPin — Coordinate Schedule', 14, 18);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`Generated: ${dateLabel}  |  Total Locations: ${records.length}`, 14, 24);
+
+        const head = [['#', 'Place Name', 'Category', 'Latitude', 'Longitude', 'Accuracy', 'Google Maps Link', 'Notes']];
+        const body = records.map((p, i) => [
+          i + 1,
+          p.name,
+          p.category,
+          p.lat.toFixed(6),
+          p.lng.toFixed(6),
+          `±${p.accuracy}m`,
+          p.mapsUrl || buildGoogleMapsUrl(p.lat, p.lng),
+          p.note || '—'
+        ]);
+
+        doc.autoTable({
+          startY: 30,
+          head,
+          body,
+          theme: 'grid',
+          headStyles: {
+            fillColor: [9, 11, 14],
+            textColor: [244, 246, 248],
+            fontStyle: 'bold',
+            fontSize: 8
+          },
+          bodyStyles: {
+            fontSize: 7.5,
+            textColor: [30, 41, 59],
+            cellPadding: 2.5
+          },
+          columnStyles: {
+            0: { cellWidth: 9, halign: 'center' },
+            1: { cellWidth: 40, fontStyle: 'bold' },
+            2: { cellWidth: 30 },
+            3: { cellWidth: 22, font: 'courier' },
+            4: { cellWidth: 22, font: 'courier' },
+            5: { cellWidth: 18, halign: 'center' },
+            6: { cellWidth: 74, textColor: [16, 140, 70] },
+            7: { cellWidth: 'auto' }
+          },
+          margin: { left: 14, right: 14 }
+        });
+
+        doc.save(`FieldPin_Places_${timestampSlug()}.pdf`);
+        closeExportDrawer();
+        notifyToast('PDF table exported', 'success');
+      } catch (err) {
+        console.error(err);
+        notifyToast('Failed to generate PDF', 'error');
+      }
+    }
+
+    /**
+     * 2. CSV Spreadsheet Export (Includes Google Maps URL Column)
+     */
+    function handleExportCSV() {
+      const records = getRecordsForExport();
+      if (records.length === 0) return;
+
+      const header = ['#,Place Name,Category,Latitude,Longitude,Accuracy,Google Maps Link,Notes,Captured At'];
+      const rows = records.map((p, i) => {
+        const mapsUrl = p.mapsUrl || buildGoogleMapsUrl(p.lat, p.lng);
+        return [
+          i + 1,
+          `"${p.name.replace(/"/g, '""')}"`,
+          `"${p.category.replace(/"/g, '""')}"`,
+          p.lat.toFixed(6),
+          p.lng.toFixed(6),
+          `±${p.accuracy}m`,
+          `"${mapsUrl}"`,
+          `"${(p.note || '').replace(/"/g, '""')}"`,
+          `"${formatShortDate(p.createdAt)}"`
+        ].join(',');
+      });
+
+      const csv = '\uFEFF' + header.concat(rows).join('\r\n');
+      triggerDownload(csv, `FieldPin_Places_${timestampSlug()}.csv`, 'text/csv;charset=utf-8;');
+      closeExportDrawer();
+      notifyToast('CSV exported', 'success');
+    }
+
+    /**
+     * 3. Word Document (.doc) Export (Includes Clickable Google Maps Links)
+     */
+    function handleExportWord() {
+      const records = getRecordsForExport();
+      if (records.length === 0) return;
+
+      const dateLabel = new Date().toLocaleString([], {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const rowsHtml = records
+        .map((p, i) => {
+          const mapsUrl = p.mapsUrl || buildGoogleMapsUrl(p.lat, p.lng);
+          return `
+            <tr style="background-color: ${i % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+              <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${i + 1}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px; font-weight: bold;">${escapeHTML(p.name)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHTML(p.category)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px; font-family: Consolas, monospace;">${p.lat.toFixed(6)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px; font-family: Consolas, monospace;">${p.lng.toFixed(6)}</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">±${p.accuracy}m</td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px;"><a href="${mapsUrl}" style="color: #0d9448;">Open in Google Maps</a></td>
+              <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHTML(p.note || '—')}</td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      const wordHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office'
+              xmlns:w='urn:schemas-microsoft-com:office:word'
+              xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset="utf-8" />
+          <title>FieldPin Coordinate Schedule</title>
+          <style>
+            body { font-family: Calibri, Arial, sans-serif; color: #090b0e; }
+            h1 { font-size: 18pt; margin-bottom: 4px; }
+            p { font-size: 10pt; color: #475569; margin-bottom: 14px; }
+            table { border-collapse: collapse; width: 100%; font-size: 9pt; }
+            th { background-color: #090b0e; color: #ffffff; border: 1px solid #090b0e; padding: 7px; text-align: left; }
+          </style>
+        </head>
+        <body>
+          <h1>FieldPin — Coordinate Schedule</h1>
+          <p>Exported on ${dateLabel} &bull; Total Locations: <strong>${records.length}</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 32px; text-align: center;">#</th>
+                <th>Place Name</th>
+                <th>Category</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th style="text-align: center;">Accuracy</th>
+                <th>Google Maps</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      triggerDownload(wordHtml, `FieldPin_Places_${timestampSlug()}.doc`, 'application/msword;charset=utf-8');
+      closeExportDrawer();
+      notifyToast('Word document exported', 'success');
+    }
+
+    function triggerDownload(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    /**
+     * Copy Coordinates & Toast Utilities
+     */
+    function copyCoords(text) {
+      const input = document.createElement('textarea');
+      input.value = text;
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      document.body.appendChild(input);
+      input.select();
+      try {
+        document.execCommand('copy');
+        notifyToast(`Copied ${text}`, 'success');
+      } catch {
+        notifyToast('Copy failed', 'error');
+      }
+      document.body.removeChild(input);
+    }
+
+    function notifyToast(message, tone = 'success') {
+      const host = document.getElementById('toastHost');
+      const toast = document.createElement('div');
+      const style =
+        tone === 'error'
+          ? 'bg-rose-950/95 border-rose-500/40 text-rose-100'
+          : tone === 'info'
+          ? 'bg-surfaceElevated border-white/15 text-alabaster'
+          : 'bg-[#0b2316] border-emeraldSignal/45 text-emerald-100';
+
+      toast.className = `px-4 py-2 rounded-full border shadow-xl text-xs font-medium flex items-center gap-2 transition-all duration-200 ${style}`;
+      toast.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${tone === 'error' ? 'bg-rose-400' : 'bg-emeraldSignal'}"></span><span>${escapeHTML(message)}</span>`;
+      host.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => toast.remove(), 220);
+      }, 2300);
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatShortDate(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch {
+        return '';
+      }
+    }
+
+    function timestampSlug() {
+      const d = new Date();
+      return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>
