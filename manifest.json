@@ -1,0 +1,26 @@
+{
+"name": "FieldPin — Minimalist GPS Coordinate Collector",
+"short_name": "FieldPin",
+"description": "Capture high-accuracy latitude and longitude coordinates in the field, verify on Google Maps, and export structured PDF, CSV, and Word schedules.",
+"start_url": "./index.html",
+"scope": "./",
+"display": "standalone",
+"orientation": "portrait",
+"background_color": "#090b0e",
+"theme_color": "#090b0e",
+"categories": ["navigation", "utilities", "productivity"],
+"icons": [
+{
+"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23090b0e'/%3E%3Crect x='16' y='16' width='480' height='480' rx='98' fill='none' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='4'/%3E%3Ccircle cx='256' cy='256' r='136' fill='none' stroke='%2310b859' stroke-width='18'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%2310b859'/%3E%3Cline x1='256' y1='64' x2='256' y2='124' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='256' y1='388' x2='256' y2='448' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='64' y1='256' x2='124' y2='256' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='388' y1='256' x2='448' y2='256' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3C/svg%3E",
+"sizes": "192x192",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+},
+{
+"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23090b0e'/%3E%3Crect x='16' y='16' width='480' height='480' rx='98' fill='none' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='4'/%3E%3Ccircle cx='256' cy='256' r='136' fill='none' stroke='%2310b859' stroke-width='18'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%2310b859'/%3E%3Cline x1='256' y1='64' x2='256' y2='124' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='256' y1='388' x2='256' y2='448' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='64' y1='256' x2='124' y2='256' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3Cline x1='388' y1='256' x2='448' y2='256' stroke='%2310b859' stroke-width='18' stroke-linecap='round'/%3E%3C/svg%3E",
+"sizes": "512x512",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+}
+]
+}
